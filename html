@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CANTIKA AI — Personal AI Assistant & Roleplay</title>
+  <style>
+    :root {
+      --bg: #0e1018;
+      --surface: #171a26;
+      --surface-2: #1f2434;
+      --border: #2d344b;
+      --text: #f3f5fc;
+      --muted: #9aa3be;
+      --accent: #ec4899;
+      --accent-2: #8b5cf6;
+      --success: #22c55e;
+      --danger: #ef4444;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: radial-gradient(circle at top right, rgba(236,72,153,0.14), transparent 45%),
+                  radial-gradient(circle at bottom left, rgba(139,92,246,0.14), transparent 45%),
+                  var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      line-height: 1.55;
+    }
+    .container { max-width: 1040px; margin: 0 auto; padding: 16px; }
+    header {
+      display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between;
+      gap: 12px; padding: 14px 18px; background: rgba(23,26,38,0.88);
+      backdrop-filter: blur(10px); border: 1px solid var(--border);
+      border-radius: 16px; position: sticky; top: 10px; z-index: 20;
+    }
+    .brand { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 1.1rem; }
+    .brand-badge {
+      width: 36px; height: 36px; border-radius: 10px; display: grid; place-items: center;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2)); color: #fff; font-size: 1rem;
+    }
+    nav { display: flex; flex-wrap: wrap; gap: 8px; }
+    button, select, input, textarea { font-family: inherit; color: var(--text); }
+    .btn {
+      border: 1px solid var(--border); background: var(--surface-2); padding: 9px 14px;
+      border-radius: 10px; cursor: pointer; font-size: 0.9rem; font-weight: 600;
+      transition: transform 0.12s ease, opacity 0.15s ease, background 0.15s ease;
+    }
+    .btn:hover { transform: translateY(-1px); background: #282f44; }
+    .btn.active { background: linear-gradient(135deg, var(--accent), var(--accent-2)); border-color: transparent; color: #fff; }
+    .btn-primary { background: linear-gradient(135deg, var(--accent), var(--accent-2)); border: none; color: #fff; padding: 11px 20px; }
+    .btn-danger { background: rgba(239,68,68,0.16); border-color: rgba(239,68,68,0.45); color: #fca5a5; }
+    .view { display: none; margin-top: 20px; }
+    .view.active { display: block; }
+    .hero {
+      text-align: center; padding: 48px 20px; background: var(--surface);
+      border: 1px solid var(--border); border-radius: 22px;
+    }
+    .hero h1 {
+      font-size: clamp(2rem, 5vw, 3rem);
+      background: linear-gradient(135deg, #fff 15%, #f9a8d4 55%, #c4b5fd 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 12px;
+    }
+    .hero p { color: var(--muted); max-width: 620px; margin: 0 auto 24px; }
+    .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; }
+    .card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 18px; padding: 18px;
+    }
+    .card h2, .card h3 { margin-bottom: 10px; font-size: 1.08rem; }
+    .muted { color: var(--muted); font-size: 0.88rem; }
+    label { display: block; font-size: 0.86rem; font-weight: 600; margin: 10px 0 5px; color: #d8def0; }
+    input[type="text"], input[type="password"], select, textarea {
+      width: 100%; background: var(--surface-2); border: 1px solid var(--border);
+      border-radius: 10px; padding: 10px 12px; font-size: 0.92rem;
+    }
+    textarea { min-height: 78px; resize: vertical; }
+.subtabs { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+    .chat-box {
+      background: var(--bg); border: 1px solid var(--border); border-radius: 14px;
+      padding: 12px; height: 320px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px;
+      margin-bottom: 10px;
+    }
+    .msg {
+      max-width: 85%; padding: 10px 13px; border-radius: 14px; font-size: 0.92rem;
+      white-space: pre-wrap; word-wrap: break-word;
+    }
+    .msg.user { align-self: flex-end; background: linear-gradient(135deg, var(--accent), var(--accent-2)); color: #fff; }
+    .msg.ai { align-self: flex-start; background: var(--surface-2); border: 1px solid var(--border); }
+    .msg.sys { align-self: center; background: rgba(139,92,246,0.14); border: 1px solid rgba(139,92,246,0.35); color: #ddd6fe; font-size: 0.82rem; max-width: 95%; }
+    .row { display: flex; gap: 8px; align-items: center; }
+    .row.wrap { flex-wrap: wrap; }
+    .row > .grow { flex: 1; min-width: 180px; }
+    .char-list { display: grid; gap: 10px; margin-top: 10px; }
+    .char-item {
+      background: var(--surface-2); border: 1px solid var(--border); border-radius: 12px;
+      padding: 12px; display: flex; justify-content: space-between; align-items: center; gap: 10px;
+    }
+    .char-item.selected { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent); }
+    .status {
+      margin-top: 12px; padding: 11px 14px; border-radius: 12px; font-size: 0.88rem;
+      display: none; white-space: pre-wrap; word-break: break-word;
+    }
+    .status.ok { display: block; background: rgba(34,197,94,0.14); border: 1px solid rgba(34,197,94,0.4); color: #86efac; }
+    .status.err { display: block; background: rgba(239,68,68,0.16); border: 1px solid rgba(239,68,68,0.45); color: #fca5a5; }
+    .pill {
+      display: inline-block; font-size: 0.76rem; padding: 3px 9px; border-radius: 999px;
+      background: rgba(236,72,153,0.18); color: #f9a8d4; margin-bottom: 8px; font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="brand">
+        <div class="brand-badge">✦</div>
+        <span>CANTIKA AI</span>
+      </div>
+      <nav>
+        <button class="btn active" data-nav="home">Beranda</button>
+        <button class="btn" data-nav="character">Buat Karakter</button>
+        <button class="btn" data-nav="settings">Pengaturan</button>
+      </nav>
+    </header>
+
+    <section id="view-home" class="view active">
+      <div class="hero">
+        <span class="pill">Personal AI Assistant & Roleplay Studio</span>
+        <h1>CANTIKA AI</h1>
+        <p>Asisten AI pribadimu untuk merancang karakter impian bersama AI, menjalankan roleplay manual atau otomatis diatur AI, dan terhubung langsung ke API Key Google AI Studio milikmu.</p>
+        <div class="row wrap" style="justify-content:center;">
+          <button id="btnStart" class="btn btn-primary">Mulai</button>
+          <button class="btn" data-nav="settings">Atur API Key</button>
+        </div>
+      </div>
+    </section>
+<section id="view-character" class="view">
+      <div class="subtabs">
+        <button id="tabMaker" class="btn active" type="button">Asisten & Form Karakter</button>
+        <button id="tabRoleplay" class="btn" type="button">Roleplay</button>
+      </div>
+
+      <div id="panel-maker" class="grid-2">
+        <div class="card">
+          <h3>Asisten AI Pembuat Karakter</h3>
+          <p class="muted">Ceritakan ide karaktermu, lalu asisten AI akan membantu menyusun dan mengisi profil karakter.</p>
+          <div id="makerChat" class="chat-box" style="margin-top:10px;"></div>
+          <div class="row">
+            <input id="makerInput" type="text" class="grow" placeholder="Contoh: Buatkan karakter detektif wanita dingin..." />
+            <button id="btnMakerSend" class="btn btn-primary" type="button">Kirim</button>
+          </div>
+          <div id="makerStatus" class="status"></div>
+        </div>
+
+        <div class="card">
+          <h3>Profil Karakter & Daftar Tersimpan</h3>
+          <label for="charName">Nama Karakter</label>
+          <input id="charName" type="text" placeholder="Contoh: Clara Vance" />
+
+          <label for="charRole">Peran / Archetype</label>
+          <input id="charRole" type="text" placeholder="Contoh: Penyelidik kasus misteri" />
+
+          <label for="charPersonality">Kepribadian & Gaya Bicara</label>
+          <textarea id="charPersonality" placeholder="Tenang, tajam, berbicara singkat dan lugas..."></textarea>
+
+          <label for="charBackstory">Latar Belakang & Penampilan</label>
+          <textarea id="charBackstory" placeholder="Mantel gelap, mata abu-abu, mantan analis forensik..."></textarea>
+
+          <div class="row wrap" style="margin-top:12px;">
+            <button id="btnSaveChar" class="btn btn-primary" type="button">Simpan Karakter</button>
+            <button id="btnClearChar" class="btn" type="button">Bersihkan Form</button>
+          </div>
+
+          <h3 style="margin-top:18px;">Karakter Tersimpan</h3>
+          <div id="charList" class="char-list"></div>
+        </div>
+      </div>
+
+      <div id="panel-roleplay" class="card" style="display:none;">
+        <h3>Ruang Roleplay</h3>
+        <p class="muted">Pilih karakter lalu atur roleplay sendiri (Manual) atau biarkan AI asisten menyusun dan mengarahkan ceritanya.</p>
+
+        <div class="grid-2" style="margin-top:8px;">
+          <div>
+            <label for="rpCharSelect">Karakter Aktif</label>
+            <select id="rpCharSelect"></select>
+          </div>
+          <div>
+            <label for="rpMode">Mode Pengaturan Roleplay</label>
+            <select id="rpMode">
+              <option value="manual">Diatur Sendiri oleh Pengguna (Manual)</option>
+              <option value="ai">Diatur oleh AI Asisten (Otomatis & Terarah)</option>
+            </select>
+          </div>
+        </div>
+
+        <div id="rpManualBox">
+          <label for="rpUserSetting">Skenario, Latar Tempat & Aturan (Atur Sendiri)</label>
+          <textarea id="rpUserSetting" placeholder="Contoh: Hujan deras di kafe tua tengah malam, aku adalah klien yang membawa berkas rahasia..."></textarea>
+        </div>
+
+        <div id="rpAiBox" style="display:none; margin-top:10px;">
+          <label for="rpAiTheme">Topik / Nuansa Awal untuk AI Asisten (Opsional)</label>
+          <input id="rpAiTheme" type="text" placeholder="Contoh: Petualangan fantasi, misteri kota, atau drama slice of life" />
+          <div class="row wrap" style="margin-top:10px;">
+            <button id="btnAiSetupRp" class="btn btn-primary" type="button">AI Asisten: Susun & Mulai Skenario</button>
+          </div>
+        </div>
+
+        <div id="rpChat" class="chat-box" style="margin-top:14px;"></div>
+        <div class="row">
+          <input id="rpInput" type="text" class="grow" placeholder="Tulis aksi atau dialog roleplay kamu..." />
+          <button id="btnRpSend" class="btn btn-primary" type="button">Kirim</button>
+          <button id="btnRpReset" class="btn" type="button">Reset Chat</button>
+        </div>
+        <div id="rpStatus" class="status"></div>
+      </div>
+    </section>
+async function callGemini(promptText, systemInstruction = "") {
+      const apiKey = getApiKey();
+      if (!apiKey) {
+        throw new Error("API Key belum tersimpan. Silakan isi di menu Pengaturan terlebih dahulu.");
+      }
+      const model = encodeURIComponent(getActiveModel());
+      const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${encodeURIComponent(apiKey)}`;
+
+      const body = {
+        contents: [{ role: "user", parts: [{ text: promptText }] }]
+      };
+      if (systemInstruction) {
+        body.systemInstruction = { parts: [{ text: systemInstruction }] };
+      }
+
+      const res = await fetch(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body)
+      });
+
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        const errMsg = data?.error?.message || `HTTP ${res.status}`;
+        throw new Error("Gagal terhubung ke Gemini API: " + errMsg);
+      }
+
+      const text = data?.candidates?.[0]?.content?.parts?.map(p => p.text || "").join("").trim();
+      if (!text) throw new Error("Respons API kosong.");
+      return text;
+    }
+
+    function switchView(name) {
+      document.querySelectorAll(".view").forEach(v => v.classList.remove("active"));
+      document.getElementById("view-" + name).classList.add("active");
+      document.querySelectorAll("header nav .btn").forEach(b => {
+        b.classList.toggle("active", b.dataset.nav === name);
+      });
+    }
+
+    document.querySelectorAll("[data-nav]").forEach(btn => {
+      btn.addEventListener("click", () => switchView(btn.dataset.nav));
+    });
+    document.getElementById("btnStart").addEventListener("click", () => switchView("character"));
+
+    const tabMaker = document.getElementById("tabMaker");
+    const tabRoleplay = document.getElementById("tabRoleplay");
+    tabMaker.addEventListener("click", () => {
+      tabMaker.classList.add("active");
+      tabRoleplay.classList.remove("active");
+      document.getElementById("panel-maker").style.display = "";
+      document.getElementById("panel-roleplay").style.display = "none";
+    });
+    tabRoleplay.addEventListener("click", () => {
+      tabRoleplay.classList.add("active");
+      tabMaker.classList.remove("active");
+      document.getElementById("panel-roleplay").style.display = "";
+      document.getElementById("panel-maker").style.display = "none";
+      renderRpSelect();
+    });
+
+    function appendMsg(boxId, text, cls) {
+      const box = document.getElementById(boxId);
+      const div = document.createElement("div");
+      div.className = "msg " + cls;
+      div.textContent = text;
+      box.appendChild(div);
+      box.scrollTop = box.scrollHeight;
+    }
+
+    function renderCharacterList() {
+      const list = document.getElementById("charList");
+      list.innerHTML = "";
+      characters.forEach(ch => {
+        const item = document.createElement("div");
+        item.className = "char-item" + (ch.id === selectedCharId ? " selected" : "");
+        item.innerHTML = `
+          <div>
+            <strong>${ch.name}</strong>
+            <div class="muted">${ch.role || "Karakter"}</div>
+          </div>
+          <div class="row">
+            <button class="btn" type="button" data-pick="${ch.id}">Pilih</button>
+            ${characters.length > 1 ? `<button class="btn btn-danger" type="button" data-del="${ch.id}">Hapus</button>` : ""}
+          </div>
+        `;
+        list.appendChild(item);
+      });
+
+      list.querySelectorAll("[data-pick]").forEach(btn => {
+        btn.addEventListener("click", () => {
+          selectedCharId = btn.dataset.pick;
+          const found = characters.find(c => c.id === selectedCharId);
+          if (found) {
+            document.getElementById("charName").value = found.name || "";
+            document.getElementById("charRole").value = found.role || "";
+            document.getElementById("charPersonality").value = found.personality || "";
+            document.getElementById("charBackstory").value = found.backstory || "";
+          }
+          renderCharacterList();
+          renderRpSelect();
+        });
+      });
+
+      list.querySelectorAll("[data-del]").forEach(btn => {
+        btn.addEventListener("click", () => {
+          characters = characters.filter(c => c.id !== btn.dataset.del);
+          if (selectedCharId === btn.dataset.del) selectedCharId = characters[0]?.id || "";
+          saveCharacters();
+          renderCharacterList();
+          renderRpSelect();
+        });
+      });
+    }
+
+    document.getElementById("btnSaveChar").addEventListener("click", () => {
+      const name = document.getElementById("charName").value.trim();
+      if (!name) return setStatus("makerStatus", "Nama karakter wajib diisi.", false);
+      const charObj = {
+        id: "char-" + Date.now(),
+        name,
+        role: document.getElementById("charRole").value.trim(),
+        personality: document.getElementById("charPersonality").value.trim(),
+        backstory: document.getElementById("charBackstory").value.trim()
+      };
+      characters.unshift(charObj);
+      selectedCharId = charObj.id;
+      saveCharacters();
+      renderCharacterList();
+      renderRpSelect();
+      setStatus("makerStatus", `Karakter "${name}" berhasil disimpan.`, true);
+    });
+
+    document.getElementById("btnClearChar").addEventListener("click", () => {
+      ["charName", "charRole", "charPersonality", "charBackstory"].forEach(id => {
+        document.getElementById(id).value = "";
+      });
+    });
+
+    document.getElementById("btnMakerSend").addEventListener("click", async () => {
+      const input = document.getElementById("makerInput");
+      const prompt = input.value.trim();
+      if (!prompt) return;
+      input.value = "";
+      appendMsg("makerChat", prompt, "user");
+
+      const sys = `Kamu adalah asisten pembuat karakter untuk CANTIKA AI. Bantu pengguna merancang karakter secara jelas dan menarik. Jika diminta membuat karakter lengkap, sertakan bagian: Nama, Peran, Kepribadian & Gaya Bicara, serta Latar Belakang & Penampilan.`;
+      try {
+        const reply = await callGemini(prompt, sys);
+        appendMsg("makerChat", reply, "ai");
+        const nameMatch = reply.match(/\*\*?Nama\*\*?\s*:\s*([^\n]+)/i);
+        const roleMatch = reply.match(/\*\*?Peran(?:\s*\/\s*Archetype)?\*\*?\s*:\s*([^\n]+)/i);
+        const persMatch = reply.match(/\*\*?Kepribadian(?:\s*&\s*Gaya Bicara)?\*\*?\s*:\s*([^\n]+)/i);
+        const backMatch = reply.match(/\*\*?Latar Belakang(?:\s*&\s*Penampilan)?\*\*?\s*:\s*([^\n]+)/i);
+        if (nameMatch) document.getElementById("charName").value = nameMatch[1].replace(/\*/g, "").trim();
+        if (roleMatch) document.getElementById("charRole").value = roleMatch[1].replace(/\*/g, "").trim();
+        if (persMatch) document.getElementById("charPersonality").value = persMatch[1].replace(/\*/g, "").trim();
+        if (backMatch) document.getElementById("charBackstory").value = backMatch[1].replace(/\*/g, "").trim();
+      } catch (err) {
+        setStatus("makerStatus", err.message, false);
+      }
+    });
+
+    function renderRpSelect() {
+      const sel = document.getElementById("rpCharSelect");
+      sel.innerHTML = "";
+      characters.forEach(c => {
+        const opt = document.createElement("option");
+        opt.value = c.id;
+        opt.textContent = `${c.name}${c.role ? " — " + c.role : ""}`;
+        if (c.id === selectedCharId) opt.selected = true;
+        sel.appendChild(opt);
+      });
+    }
+
+    document.getElementById("rpMode").addEventListener("change", (e) => {
+      const isAi = e.target.value === "ai";
+      document.getElementById("rpManualBox").style.display = isAi ? "none" : "";
+      document.getElementById("rpAiBox").style.display = isAi ? "" : "none";
+      appendMsg("rpChat", isAi ? "Mode diubah ke: Diatur oleh AI Asisten." : "Mode diubah ke: Diatur Sendiri oleh Pengguna.", "sys");
+    });
+
+    function getSelectedChar() {
+      const id = document.getElementById("rpCharSelect").value || selectedCharId;
+      return characters.find(c => c.id === id) || characters[0];
+    }
+
+    document.getElementById("btnAiSetupRp").addEventListener("click", async () => {
+      const ch = getSelectedChar();
+      const theme = document.getElementById("rpAiTheme").value.trim() || "bebas dan menarik";
+      const sys = `Kamu adalah sutradara/asisten roleplay CANTIKA AI. Perankan karakter "${ch.name}" (${ch.role}). Kepribadian: ${ch.personality}. Latar: ${ch.backstory}. Susun skenario pembuka singkat, jelas, dan imersif dengan nuansa: ${theme}, lalu mulai adegan pertama.`;
+      try {
+        const opening = await callGemini("Buatkan skenario pembuka roleplay dan mulai adegan pertamanya.", sys);
+        rpHistory = [{ role: "assistant", content: opening }];
+        appendMsg("rpChat", opening, "ai");
+      } catch (err) {
+        setStatus("rpStatus", err.message, false);
+      }
+    });
+
+    document.getElementById("btnRpSend").addEventListener("click", async () => {
+      const input = document.getElementById("rpInput");
+      const msg = input.value.trim();
+      if (!msg) return;
+      input.value = "";
+
+      const ch = getSelectedChar();
+      const mode = document.getElementById("rpMode").value;
+      const manualSetting = document.getElementById("rpUserSetting").value.trim();
+
+      rpHistory.push({ role: "user", content: msg });
+      appendMsg("rpChat", msg, "user");
+
+      const modeInstruction = mode === "ai"
+        ? "Sebagai AI asisten pengatur roleplay, arahkan alur cerita, berikan detail situasi/tantangan menarik secara alami, dan balas sebagai karakter."
+        : `Ikuti skenario dan aturan yang ditentukan pengguna secara ketat: ${manualSetting || "Roleplay bebas sesuai konteks percakapan."}`;
+
+      const sys = `Kamu memerankan karakter "${ch.name}" (${ch.role}). Kepribadian & gaya bicara: ${ch.personality}. Latar belakang: ${ch.backstory}. ${modeInstruction}`;
+      const transcript = rpHistory.slice(-10).map(m => `${m.role === "user" ? "Pengguna" : ch.name}: ${m.content}`).join("\n");
+
+      try {
+        const reply = await callGemini(transcript + `\n${ch.name}:`, sys);
+        rpHistory.push({ role: "assistant", content: reply });
+        appendMsg("rpChat", reply, "ai");
+      } catch (err) {
+        setStatus("rpStatus", err.message, false);
+      }
+    });
+
+    document.getElementById("btnRpReset").addEventListener("click", () => {
+      rpHistory = [];
+      document.getElementById("rpChat").innerHTML = "";
+      appendMsg("rpChat", "Riwayat roleplay direset.", "sys");
+    });
+
+    const modelSelect = document.getElementById("modelSelect");
+    const customModelWrap = document.getElementById("customModelWrap");
+    modelSelect.addEventListener("change", () => {
+      customModelWrap.style.display = modelSelect.value === "custom" ? "" : "none";
+    });
+
+    document.getElementById("btnSaveKey").addEventListener("click", () => {
+      const key = document.getElementById("apiKeyInput").value.trim();
+      if (!key) return setStatus("settingsStatus", "Masukkan API Key terlebih dahulu.", false);
+      localStorage.setItem(STORAGE_KEY, key);
+      localStorage.setItem(STORAGE_MODEL, modelSelect.value);
+      localStorage.setItem(STORAGE_CUSTOM_MODEL, document.getElementById("customModelInput").value.trim());
+      setStatus("settingsStatus", `API Key tersimpan. Model aktif: ${getActiveModel()}`, true);
+    });
+
+    document.getElementById("btnTestKey").addEventListener("click", async () => {
+      const typedKey = document.getElementById("apiKeyInput").value.trim();
+      if (typedKey) {
+        localStorage.setItem(STORAGE_KEY, typedKey);
+        localStorage.setItem(STORAGE_MODEL, modelSelect.value);
+        localStorage.setItem(STORAGE_CUSTOM_MODEL, document.getElementById("customModelInput").value.trim());
+      }
+      try {
+        const out = await callGemini("Balas singkat dengan kata: Terhubung");
+        setStatus("settingsStatus", `Berhasil terhubung (${getActiveModel()}): ${out}`, true);
+      } catch (err) {
+        setStatus("settingsStatus", err.message, false);
+      }
+    });
+
+    document.getElementById("btnDeleteKey").addEventListener("click", () => {
+      localStorage.removeItem(STORAGE_KEY);
+      document.getElementById("apiKeyInput").value = "";
+      setStatus("settingsStatus", "API Key dihapus dari browser.", true);
+    });
+
+    (function init() {
+      const savedKey = localStorage.getItem(STORAGE_KEY);
+      const savedModel = localStorage.getItem(STORAGE_MODEL);
+      const savedCustom = localStorage.getItem(STORAGE_CUSTOM_MODEL);
+      if (savedKey) {
+        document.getElementById("apiKeyInput").value = savedKey;
+        setStatus("settingsStatus", `API Key ditemukan di browser. Model aktif: ${savedCustom || savedModel || "gemini-2.5-flash"}`, true);
+      }
+      if (savedModel) {
+        modelSelect.value = savedModel;
+        customModelWrap.style.display = savedModel === "custom" ? "" : "none";
+      }
+      if (savedCustom) document.getElementById("customModelInput").value = savedCustom;
+
+      appendMsg("makerChat", "Halo! Aku asisten pembuat karakter CANTIKA AI. Mau buat karakter seperti apa hari ini?", "ai");
+      appendMsg("rpChat", "Pilih karakter dan mode roleplay (Manual atau AI Asisten) di atas, lalu mulai bermain peran.", "sys");
+      renderCharacterList();
+      renderRpSelect();
+    })();
+  </script>
+</body>
+</html>
