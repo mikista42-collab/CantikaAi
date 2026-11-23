@@ -1,0 +1,8 @@
+[{
+      "relation": ["delegate_permission/common.handle_all_urls"],
+      "target": {
+        "namespace": "android_app",
+        "package_name": "io.github.mikista42_collab.twa",
+        "sha256_cert_fingerprints": ["86:AD:21:FE:A4:40:29:98:9D:6F:DE:69:94:18:45:B1:2F:B1:48:34:CF:38:3B:19:C7:58:3E:29:5F:AE:35:BF"]
+      }
+    }]
