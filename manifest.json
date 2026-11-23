@@ -1,7 +1,8 @@
 {
+  "id": "/CantikaAi/",
   "name": "CANTIKA AI",
   "short_name": "CANTIKA AI",
-  "description": "Asisten AI personal CANTIKA AI untuk membuat karakter, roleplay manual atau diatur AI, dan menghubungkan API Key Google AI Studio.",
+  "description": "Asisten AI personal CANTIKA AI untuk membuat karakter, roleplay manual atau diatur AI, dan menghubungkan API Key Google AI Studio milikmu.",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
@@ -20,6 +21,13 @@
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "launchericon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
     }
   ]
 }
