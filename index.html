@@ -13,7 +13,7 @@
       --card-2: #22283c;
       --border: #303854;
       --text: #f5f7ff;
-      --muted: #9ea8c7;
+      --muted: #a0a8c7;
       --accent: #ec4899;
       --accent-2: #8b5cf6;
     }
@@ -29,14 +29,14 @@
     header {
       display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between;
       gap: 10px; background: var(--card); border: 1px solid var(--border);
-      border-radius: 14px; padding: 12px 16px;
+      border-radius: 12px; padding: 12px 16px;
     }
     .logo { font-weight: 700; font-size: 1.05rem; }
-    nav { display: flex; flex-wrap: wrap; gap: 8px; }
+    nav { display: flex; flex-wrap: wrap; gap: 6px; }
     button, input, select, textarea { font-family: inherit; color: var(--text); }
     .btn {
       background: var(--card-2); border: 1px solid var(--border); border-radius: 10px;
-      padding: 8px 13px; cursor: pointer; font-size: 0.88rem; font-weight: 600;
+      padding: 8px 12px; cursor: pointer; font-size: 0.88rem; font-weight: 600;
     }
     .btn.active, .btn-main {
       background: linear-gradient(135deg, var(--accent), var(--accent-2));
@@ -45,7 +45,7 @@
     .btn-del {
       background: rgba(239,68,68,0.16); border-color: rgba(239,68,68,0.45); color: #fca5a5;
     }
-    .page { display: none; margin-top: 18px; }
+    .page { display: none; margin-top: 14px; }
     .page.active { display: block; }
     .hero {
       text-align: center; background: var(--card); border: 1px solid var(--border);
@@ -154,7 +154,7 @@
       </div>
 
       <div id="area-rp" class="box" style="display:none;">
-        <h3>Mode Roleplay</h3>
+        <h2>Mode Roleplay</h2>
         <p class="muted">Atur skenario sendiri atau biarkan AI asisten yang menyusun dan mengarahkan roleplay.</p>
         <div class="grid" style="margin-top:6px;">
           <div>
@@ -169,10 +169,12 @@
             </select>
           </div>
         </div>
+
         <div id="rpManualWrap">
           <label for="rpSetting">Skenario / Aturan Manual</label>
           <textarea id="rpSetting" placeholder="Tulis latar tempat, situasi, atau aturan roleplay kamu..."></textarea>
         </div>
+
         <div id="rpAiWrap" style="display:none;">
           <label for="rpTopic">Tema / Nuansa untuk AI Asisten</label>
           <input id="rpTopic" type="text" placeholder="Contoh: misteri, fantasi, atau santai" />
@@ -180,6 +182,7 @@
             <button id="btnAiMulaiRp" class="btn btn-main" type="button">AI Asisten: Susun & Mulai Roleplay</button>
           </div>
         </div>
+
         <div id="rpChat" class="chat"></div>
         <div class="row">
           <input id="rpInput" type="text" class="grow" placeholder="Ketik pesan roleplay..." />
@@ -193,7 +196,7 @@
     <section id="page-set" class="page">
       <div class="box" style="max-width:640px; margin:0 auto;">
         <h2>Pengaturan API Key AI Studio</h2>
-        <p class="muted">API Key disimpan di browser (<code>localStorage</code>). Gunakan model Flash jika model Pro terkena limit kuota di Free Tier.</p>
+        <p class="muted">API Key disimpan di browser (<code>localStorage</code>). Gunakan model Flash jika model Pro terbatasi kuota.</p>
         <label for="apiKey">API Key Google AI Studio</label>
         <input id="apiKey" type="password" placeholder="Tempelkan API Key di sini..." autocomplete="off" />
         <label for="modelSel">Nama Model</label>
@@ -322,6 +325,7 @@
           ${chars.length > 1 ? `<button class="btn btn-del" type="button" data-del="${c.id}">Hapus</button>` : ""}</div>`;
         box.appendChild(el);
       });
+
       box.querySelectorAll("[data-pick]").forEach(b => b.addEventListener("click", () => {
         pickedId = b.dataset.pick;
         const f = chars.find(x => x.id === pickedId);
@@ -334,6 +338,7 @@
         renderChars();
         renderRpSelect();
       }));
+
       box.querySelectorAll("[data-del]").forEach(b => b.addEventListener("click", () => {
         chars = chars.filter(x => x.id !== b.dataset.del);
         if (pickedId === b.dataset.del) pickedId = chars[0]?.id || "";
@@ -375,10 +380,10 @@
       try {
         const ans = await askGemini(q, sys);
         addChat("buatChat", ans, "ai");
-        const m1 = ans.match(/\*\*?Nama\*\*?\s*:\s*([^\n]+)/i);
-        const m2 = ans.match(/\*\*?Peran\*\*?\s*:\s*([^\n]+)/i);
-        const m3 = ans.match(/\*\*?Kepribadian(?:\s*&\s*Gaya Bicara)?\*\*?\s*:\s*([^\n]+)/i);
-        const m4 = ans.match(/\*\*?Latar Belakang(?:\s*&\s*Penampilan)?\*\*?\s*:\s*([^\n]+)/i);
+        const m1 = ans.match(/\*{0,2}Nama\*{0,2}\s*[:\-]\s*([^\n]+)/i);
+        const m2 = ans.match(/\*{0,2}Peran\*{0,2}\s*[:\-]\s*([^\n]+)/i);
+        const m3 = ans.match(/\*{0,2}Kepribadian(?:\s*&\s*Gaya Bicara)?\*{0,2}\s*[:\-]\s*([\s\S]*?)(?=\n\*{0,2}Latar Belakang|\nLatar Belakang|$)/i);
+        const m4 = ans.match(/\*{0,2}Latar Belakang(?:\s*&\s*Penampilan)?\*{0,2}\s*[:\-]\s*([\s\S]*)/i);
         if (m1) document.getElementById("cName").value = m1[1].replace(/\*/g, "").trim();
         if (m2) document.getElementById("cRole").value = m2[1].replace(/\*/g, "").trim();
         if (m3) document.getElementById("cTrait").value = m3[1].replace(/\*/g, "").trim();
@@ -394,7 +399,7 @@
       chars.forEach(c => {
         const o = document.createElement("option");
         o.value = c.id;
-        o.textContent = c.name + (c.role ? " — " + c.role : "");
+        o.textContent = c.name + (c.role ? " - " + c.role : "");
         if (c.id === pickedId) o.selected = true;
         sel.appendChild(o);
       });
@@ -415,7 +420,7 @@
     document.getElementById("btnAiMulaiRp").addEventListener("click", async () => {
       const c = curChar();
       const topic = document.getElementById("rpTopic").value.trim() || "bebas";
-      const sys = `Kamu mengatur roleplay CANTIKA AI dan memerankan ${c.name} (${c.role}). Sifat: ${c.trait}. Latar: ${c.bio}. Susun adegan pembuka dengan nuansa ${topic}.`;
+      const sys = `Kamu mengatur roleplay CANTIKA AI dan memerankan ${c.name} (${c.role}). Sifat: ${c.trait}. Latar: ${c.bio}. Tema/nuansa: ${topic}.`;
       try {
         const open = await askGemini("Buat skenario pembuka dan mulai adegan pertama.", sys);
         rpLog = [{ r: "ai", t: open }];
@@ -507,6 +512,13 @@
       renderChars();
       renderRpSelect();
     })();
+  </script>
+  <script>
+    if ("serviceWorker" in navigator) {
+      window.addEventListener("load", () => {
+        navigator.serviceWorker.register("./sw.js").catch(() => {});
+      });
+    }
   </script>
 </body>
 </html>
