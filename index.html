@@ -8,224 +8,284 @@
   <meta name="theme-color" content="#ec4899" />
   <style>
     :root {
-      --bg: #0f111a;
-      --card: #181c2a;
-      --card-2: #22283c;
-      --border: #303854;
-      --text: #f5f7ff;
-      --muted: #a0a8c7;
-      --accent: #ec4899;
-      --accent-2: #8b5cf6;
+      --bg: #0b0d14;
+      --surface: #121622;
+      --card: #171c2b;
+      --card-hover: #1e2538;
+      --border: rgba(148, 163, 184, 0.16);
+      --text: #f8fafc;
+      --muted: #94a3b8;
+      --pink: #ec4899;
+      --purple: #8b5cf6;
+      --cyan: #22d3ee;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
-      font-family: system-ui, -apple-system, sans-serif;
-      background: var(--bg);
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background:
+        radial-gradient(circle at 12% 8%, rgba(236, 72, 153, 0.18), transparent 36%),
+        radial-gradient(circle at 88% 12%, rgba(139, 92, 246, 0.2), transparent 40%),
+        var(--bg);
       color: var(--text);
       min-height: 100vh;
-      line-height: 1.5;
+      line-height: 1.55;
     }
-    .wrap { max-width: 980px; margin: 0 auto; padding: 14px; }
-    header {
-      display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between;
-      gap: 10px; background: var(--card); border: 1px solid var(--border);
-      border-radius: 12px; padding: 12px 16px;
+    .wrap { max-width: 1120px; margin: 0 auto; padding: 14px 16px 36px; }
+    .topbar {
+      position: sticky; top: 10px; z-index: 20;
+      display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px;
+      background: rgba(18, 22, 34, 0.86); backdrop-filter: blur(14px);
+      border: 1px solid var(--border); border-radius: 16px; padding: 12px 16px;
     }
-    .logo { font-weight: 700; font-size: 1.05rem; }
+    .brand { display: flex; align-items: center; gap: 10px; }
+    .brand-badge {
+      width: 36px; height: 36px; border-radius: 11px;
+      display: grid; place-items: center; font-weight: 800; color: #fff;
+      background: linear-gradient(135deg, var(--pink), var(--purple));
+      box-shadow: 0 8px 24px rgba(236, 72, 153, 0.3);
+    }
+    .brand-title { font-weight: 800; font-size: 1rem; letter-spacing: 0.3px; }
+    .brand-sub { font-size: 0.75rem; color: var(--muted); }
     nav { display: flex; flex-wrap: wrap; gap: 6px; }
     button, input, select, textarea { font-family: inherit; color: var(--text); }
     .btn {
-      background: var(--card-2); border: 1px solid var(--border); border-radius: 10px;
-      padding: 8px 12px; cursor: pointer; font-size: 0.88rem; font-weight: 600;
+      background: var(--card); border: 1px solid var(--border); border-radius: 11px;
+      padding: 8px 13px; cursor: pointer; font-size: 0.86rem; font-weight: 600;
+      transition: transform 0.14s ease, background 0.16s ease, border-color 0.16s ease;
     }
-    .btn.active, .btn-main {
-      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+    .btn:hover { background: var(--card-hover); border-color: rgba(236, 72, 153, 0.45); }
+    .btn:active { transform: scale(0.98); }
+    .btn.active, .btn-primary {
+      background: linear-gradient(135deg, var(--pink), var(--purple));
       border-color: transparent; color: #fff;
+      box-shadow: 0 6px 20px rgba(236, 72, 153, 0.25);
     }
+    .btn-ghost { background: transparent; border-color: var(--border); }
     .btn-del {
-      background: rgba(239,68,68,0.16); border-color: rgba(239,68,68,0.45); color: #fca5a5;
+      background: rgba(239, 68, 68, 0.14); border-color: rgba(239, 68, 68, 0.4); color: #fca5a5;
     }
-    .page { display: none; margin-top: 14px; }
+    .page { display: none; margin-top: 16px; animation: fadeIn 0.2s ease; }
     .page.active { display: block; }
-    .hero {
-      text-align: center; background: var(--card); border: 1px solid var(--border);
-      border-radius: 18px; padding: 34px 18px;
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+
+    .banner {
+      display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px;
+      background: linear-gradient(135deg, rgba(236, 72, 153, 0.16), rgba(139, 92, 246, 0.14) 55%, rgba(18, 22, 34, 0.95));
+      border: 1px solid var(--border); border-radius: 22px; padding: 24px 22px;
     }
-    .hero h1 { font-size: 2.1rem; margin-bottom: 10px; }
-    .hero p { color: var(--muted); max-width: 580px; margin: 0 auto 18px; }
-    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(290px, 1fr)); gap: 14px; }
-    .box {
-      background: var(--card); border: 1px solid var(--border);
-      border-radius: 16px; padding: 16px;
+    .banner h1 { font-size: 1.75rem; line-height: 1.2; margin-bottom: 6px; }
+    .banner p { color: var(--muted); max-width: 600px; font-size: 0.92rem; }
+    .toolbar {
+      display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px;
+      margin: 16px 0 12px;
     }
-    .box h2, .box h3 { margin-bottom: 8px; font-size: 1.05rem; }
-    .muted { color: var(--muted); font-size: 0.86rem; }
-    label { display: block; font-size: 0.85rem; font-weight: 600; margin: 10px 0 4px; }
+    .search-box { flex: 1; min-width: 210px; max-width: 360px; }
+    .char-grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 14px;
+    }
+    .profile-card {
+      background: var(--card); border: 1px solid var(--border); border-radius: 18px;
+      padding: 16px; display: flex; flex-direction: column; justify-content: space-between; gap: 12px;
+      transition: border-color 0.18s ease, transform 0.18s ease;
+    }
+    .profile-card:hover { border-color: rgba(236, 72, 153, 0.5); transform: translateY(-2px); }
+    .profile-card.selected { border-color: var(--pink); box-shadow: 0 0 0 1px rgba(236, 72, 153, 0.35); }
+    .profile-top { display: flex; align-items: center; gap: 12px; }
+    .avatar {
+      width: 46px; height: 46px; border-radius: 14px; flex-shrink: 0;
+      display: grid; place-items: center; font-weight: 800; font-size: 1.1rem; color: #fff;
+      background: linear-gradient(135deg, var(--pink), var(--purple));
+    }
+    .role-pill {
+      display: inline-block; margin-top: 3px; padding: 2px 9px; border-radius: 999px;
+      font-size: 0.74rem; font-weight: 600; color: #f9a8d4;
+      background: rgba(236, 72, 153, 0.15); border: 1px solid rgba(236, 72, 153, 0.3);
+    }
+    .profile-desc {
+      color: var(--muted); font-size: 0.85rem;
+      display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;
+    }
+
+    .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 14px; }
+    .panel {
+      background: var(--card); border: 1px solid var(--border); border-radius: 18px; padding: 16px;
+    }
+    .panel h2, .panel h3 { font-size: 1.05rem; margin-bottom: 6px; }
+    .muted { color: var(--muted); font-size: 0.85rem; }
+    label { display: block; font-size: 0.82rem; font-weight: 600; color: #cbd5e1; margin: 10px 0 4px; }
     input[type="text"], input[type="password"], select, textarea {
-      width: 100%; background: var(--card-2); border: 1px solid var(--border);
-      border-radius: 10px; padding: 9px 11px; font-size: 0.9rem;
+      width: 100%; background: var(--surface); border: 1px solid var(--border);
+      border-radius: 11px; padding: 9px 12px; font-size: 0.88rem;
     }
-    textarea { min-height: 72px; resize: vertical; }
+    input:focus, select:focus, textarea:focus {
+      outline: none; border-color: var(--pink); box-shadow: 0 0 0 3px rgba(236, 72, 153, 0.16);
+    }
+    textarea { min-height: 76px; resize: vertical; }
     .tabs { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 14px; }
-    .chat {
-      background: var(--bg); border: 1px solid var(--border); border-radius: 12px;
-      padding: 10px; height: 280px; overflow-y: auto; display: flex; flex-direction: column;
-      gap: 8px; margin: 10px 0;
+    .chat-box {
+      background: var(--surface); border: 1px solid var(--border); border-radius: 14px;
+      padding: 12px; height: 310px; overflow-y: auto; display: flex; flex-direction: column;
+      gap: 9px; margin: 12px 0;
     }
-    .msg {
-      max-width: 85%; padding: 9px 12px; border-radius: 12px; font-size: 0.9rem;
+    .bubble {
+      max-width: 84%; padding: 10px 13px; border-radius: 14px; font-size: 0.89rem;
       white-space: pre-wrap; word-break: break-word;
     }
-    .msg.user { align-self: flex-end; background: linear-gradient(135deg, var(--accent), var(--accent-2)); color: #fff; }
-    .msg.ai { align-self: flex-start; background: var(--card-2); border: 1px solid var(--border); }
-    .msg.sys { align-self: center; background: rgba(139,92,246,0.16); color: #ddd6fe; font-size: 0.8rem; }
+    .bubble.user {
+      align-self: flex-end; color: #fff; border-bottom-right-radius: 4px;
+      background: linear-gradient(135deg, var(--pink), var(--purple));
+    }
+    .bubble.ai {
+      align-self: flex-start; background: var(--card); border: 1px solid var(--border);
+      border-bottom-left-radius: 4px;
+    }
+    .bubble.sys {
+      align-self: center; background: rgba(139, 92, 246, 0.15); border: 1px solid rgba(139, 92, 246, 0.3);
+      color: #e9d5ff; font-size: 0.78rem; padding: 6px 12px;
+    }
     .row { display: flex; gap: 8px; align-items: center; }
     .row.wrap { flex-wrap: wrap; }
-    .grow { flex: 1; min-width: 150px; }
-    .char-card {
-      background: var(--card-2); border: 1px solid var(--border); border-radius: 12px;
-      padding: 10px; margin-top: 8px; display: flex; justify-content: space-between; align-items: flex-start; gap: 8px;
-    }
-    .char-card.picked { border-color: var(--accent); }
-    .char-desc { color: var(--muted); font-size: 0.82rem; margin-top: 4px; white-space: pre-wrap; }
+    .grow { flex: 1; min-width: 140px; }
     .alert {
-      margin-top: 12px; padding: 10px 12px; border-radius: 10px; font-size: 0.86rem;
+      margin-top: 10px; padding: 9px 12px; border-radius: 11px; font-size: 0.84rem;
       display: none; white-space: pre-wrap; word-break: break-word;
     }
-    .alert.ok { display: block; background: rgba(34,197,94,0.15); border: 1px solid rgba(34,197,94,0.4); color: #86efac; }
-    .alert.err { display: block; background: rgba(239,68,68,0.16); border: 1px solid rgba(239,68,68,0.45); color: #fca5a5; }
+    .alert.ok { display: block; background: rgba(34, 197, 94, 0.14); border: 1px solid rgba(34, 197, 94, 0.38); color: #86efac; }
+    .alert.err { display: block; background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.42); color: #fca5a5; }
+
+    .modal-backdrop {
+      position: fixed; inset: 0; z-index: 50; display: none; align-items: center; justify-content: center;
+      padding: 16px; background: rgba(5, 7, 12, 0.76); backdrop-filter: blur(6px);
+    }
+    .modal-backdrop.open { display: flex; }
+    .modal-card {
+      width: 100%; max-width: 480px; background: var(--card); border: 1px solid var(--border);
+      border-radius: 20px; padding: 20px; box-shadow: 0 24px 60px rgba(0, 0, 0, 0.55);
+    }
   </style>
 </head>
 <body>
   <div class="wrap">
-    <header>
-      <div class="logo">✦ CANTIKA AI</div>
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-badge">C</div>
+        <div>
+          <div class="brand-title">CANTIKA AI</div>
+          <div class="brand-sub">Character & Roleplay Studio</div>
+        </div>
+      </div>
       <nav>
         <button class="btn active" data-go="home" type="button">Beranda</button>
-        <button class="btn" data-go="char" type="button">Buat Karakter</button>
+        <button class="btn" data-go="char" type="button">Studio & Roleplay</button>
         <button class="btn" data-go="set" type="button">Pengaturan</button>
       </nav>
     </header>
 
     <section id="page-home" class="page active">
-      <div class="hero">
-        <h1>CANTIKA AI</h1>
-        <p>Asisten AI pribadimu untuk membuat karakter bersama AI, bermain roleplay secara manual atau diatur AI, dan menghubungkan API Key Google AI Studio milikmu.</p>
-        <div class="row wrap" style="justify-content:center;">
-          <button id="btnMulai" class="btn btn-main" type="button">Mulai</button>
-          <button id="btnHomeTambahChar" class="btn" type="button">Tambah Karakter</button>
-          <button class="btn" data-go="set" type="button">Pengaturan API Key</button>
+      <div class="banner">
+        <div>
+          <h1>Temukan & Mainkan Peran Karakter</h1>
+          <p>Pilih karakter dengan peran dan kepribadian unik untuk mulai roleplay, atau klik <strong>Tambah Karakter</strong> untuk membuat karakter baru kapan saja.</p>
+        </div>
+        <div class="row wrap">
+          <button id="btnOpenModalChar" class="btn btn-primary" type="button">+ Tambah Karakter</button>
+          <button id="btnGoRpHome" class="btn" type="button">Masuk Roleplay</button>
         </div>
       </div>
 
-      <div class="grid" style="margin-top:14px;">
-        <div class="box">
-          <h2>Tambah Karakter Cepat</h2>
-          <p class="muted">Buat karakter baru dengan nama, peran, dan deskripsi langsung dari halaman utama.</p>
-          <label for="homeName">Nama Karakter</label>
-          <input id="homeName" type="text" placeholder="Contoh: Raka" />
-          <label for="homeRole">Peran</label>
-          <input id="homeRole" type="text" placeholder="Contoh: Penjaga Arsip & Pemandu" />
-          <label for="homeDesc">Deskripsi</label>
-          <textarea id="homeDesc" placeholder="Tulis kepribadian, latar belakang, atau ciri khas karakter..."></textarea>
-          <div class="row wrap" style="margin-top:10px;">
-            <button id="btnHomeSimpanChar" class="btn btn-main" type="button">Tambah Karakter</button>
-            <button id="btnHomeResetChar" class="btn" type="button">Bersihkan</button>
-          </div>
-          <div id="homeAlert" class="alert"></div>
-        </div>
-
-        <div class="box">
-          <h2>Daftar Karakter Aktif</h2>
-          <p class="muted">Pilih karakter untuk dipakai di roleplay atau kelola daftar karakter.</p>
-          <div id="homeCharList"></div>
-        </div>
+      <div class="toolbar">
+        <input id="searchChar" class="search-box" type="text" placeholder="Cari nama atau peran karakter..." />
+        <div class="muted" id="charCountLabel">0 Karakter</div>
       </div>
+
+      <div id="homeCharGrid" class="char-grid"></div>
     </section>
 
     <section id="page-char" class="page">
       <div class="tabs">
-        <button id="tabBuat" class="btn active" type="button">Buat Karakter & Asisten AI</button>
-        <button id="tabRp" class="btn" type="button">Roleplay</button>
+        <button id="tabRp" class="btn active" type="button">Ruang Roleplay</button>
+        <button id="tabBuat" class="btn" type="button">Buat Karakter & Asisten AI</button>
       </div>
 
-      <div id="area-buat" class="grid">
-        <div class="box">
-          <h3>Asisten AI Pembuat Karakter</h3>
-          <p class="muted">Minta bantuan AI untuk merancang dan mengisi detail karakter.</p>
-          <div id="buatChat" class="chat"></div>
+      <div id="area-rp" class="panel">
+        <h2>Ruang Roleplay Karakter</h2>
+        <p class="muted">Setiap karakter membawa peran, sifat, dan deskripsinya sendiri ke dalam alur cerita.</p>
+        <div class="grid-2" style="margin-top:8px;">
+          <div>
+            <label for="rpChar">Karakter Aktif</label>
+            <select id="rpChar"></select>
+          </div>
+          <div>
+            <label for="rpMode">Pengatur Alur Roleplay</label>
+            <select id="rpMode">
+              <option value="ai">Diatur AI Asisten (Dinamis)</option>
+              <option value="manual">Diatur Sendiri (Skenario Manual)</option>
+            </select>
+          </div>
+        </div>
+
+        <div id="activeCharInfo" class="profile-card" style="margin-top:12px;"></div>
+
+        <div id="rpAiWrap">
+          <label for="rpTopic">Tema / Suasana Cerita</label>
+          <input id="rpTopic" type="text" placeholder="Contoh: kafe malam hujan, misi rahasia fantasi, atau obrolan santai" />
+          <div style="margin-top:10px;">
+            <button id="btnAiMulaiRp" class="btn btn-primary" type="button">Mulai Adegan dengan AI</button>
+          </div>
+        </div>
+
+        <div id="rpManualWrap" style="display:none;">
+          <label for="rpSetting">Skenario & Aturan Peran Manual</label>
+          <textarea id="rpSetting" placeholder="Tulis lokasi, situasi awal, atau aturan main peran karakter..."></textarea>
+        </div>
+
+        <div id="rpChat" class="chat-box"></div>
+        <div class="row">
+          <input id="rpInput" type="text" class="grow" placeholder="Tulis aksi atau dialog peranmu..." />
+          <button id="btnRpKirim" class="btn btn-primary" type="button">Kirim</button>
+          <button id="btnRpReset" class="btn" type="button">Reset</button>
+        </div>
+        <div id="rpAlert" class="alert"></div>
+      </div>
+
+      <div id="area-buat" class="grid-2" style="display:none;">
+        <div class="panel">
+          <h3>Asisten AI Perancang Karakter</h3>
+          <p class="muted">Jelaskan ide karakter yang kamu mau, lalu AI akan merancang detailnya.</p>
+          <div id="buatChat" class="chat-box"></div>
           <div class="row">
-            <input id="buatInput" type="text" class="grow" placeholder="Contoh: Buatkan karakter penyihir ramah..." />
-            <button id="btnBuatKirim" class="btn btn-main" type="button">Kirim</button>
+            <input id="buatInput" type="text" class="grow" placeholder="Contoh: Buat karakter detektif dingin tapi peduli..." />
+            <button id="btnBuatKirim" class="btn btn-primary" type="button">Kirim</button>
           </div>
           <div id="buatAlert" class="alert"></div>
         </div>
 
-        <div class="box">
-          <h3>Form & Karakter Tersimpan</h3>
+        <div class="panel">
+          <h3>Editor Detail Karakter</h3>
           <label for="cName">Nama Karakter</label>
           <input id="cName" type="text" placeholder="Nama karakter" />
           <label for="cRole">Peran</label>
-          <input id="cRole" type="text" placeholder="Peran karakter" />
+          <input id="cRole" type="text" placeholder="Contoh: Kapten Kapal, Mentor, Rival" />
           <label for="cTrait">Kepribadian & Gaya Bicara</label>
-          <textarea id="cTrait" placeholder="Sifat dan cara bicara"></textarea>
-          <label for="cBio">Deskripsi / Latar Belakang</label>
-          <textarea id="cBio" placeholder="Deskripsi lengkap, latar belakang, dan penampilan"></textarea>
-          <div class="row wrap" style="margin-top:10px;">
-            <button id="btnSimpanChar" class="btn btn-main" type="button">Simpan Karakter</button>
+          <textarea id="cTrait" placeholder="Sifat, emosi, dan cara bicara karakter"></textarea>
+          <label for="cBio">Deskripsi & Latar Belakang</label>
+          <textarea id="cBio" placeholder="Deskripsi penampilan, latar kisah, dan hubungan peran"></textarea>
+          <div class="row wrap" style="margin-top:12px;">
+            <button id="btnSimpanChar" class="btn btn-primary" type="button">Simpan Karakter</button>
             <button id="btnResetForm" class="btn" type="button">Kosongkan</button>
           </div>
           <div id="charList"></div>
         </div>
       </div>
-
-      <div id="area-rp" class="box" style="display:none;">
-        <h2>Mode Roleplay</h2>
-        <p class="muted">Atur skenario sendiri atau biarkan AI asisten yang menyusun dan mengarahkan roleplay.</p>
-        <div class="grid" style="margin-top:6px;">
-          <div>
-            <label for="rpChar">Pilih Karakter</label>
-            <select id="rpChar"></select>
-          </div>
-          <div>
-            <label for="rpMode">Pengaturan Roleplay</label>
-            <select id="rpMode">
-              <option value="manual">Diatur Sendiri (Manual)</option>
-              <option value="ai">Diatur AI Asisten</option>
-            </select>
-          </div>
-        </div>
-
-        <div id="rpManualWrap">
-          <label for="rpSetting">Skenario / Aturan Manual</label>
-          <textarea id="rpSetting" placeholder="Tulis latar tempat, situasi, atau aturan roleplay kamu..."></textarea>
-        </div>
-
-        <div id="rpAiWrap" style="display:none;">
-          <label for="rpTopic">Tema / Nuansa untuk AI Asisten</label>
-          <input id="rpTopic" type="text" placeholder="Contoh: misteri, fantasi, atau santai" />
-          <div style="margin-top:10px;">
-            <button id="btnAiMulaiRp" class="btn btn-main" type="button">AI Asisten: Susun & Mulai Roleplay</button>
-          </div>
-        </div>
-
-        <div id="rpChat" class="chat"></div>
-        <div class="row">
-          <input id="rpInput" type="text" class="grow" placeholder="Ketik pesan roleplay..." />
-          <button id="btnRpKirim" class="btn btn-main" type="button">Kirim</button>
-          <button id="btnRpReset" class="btn" type="button">Reset</button>
-        </div>
-        <div id="rpAlert" class="alert"></div>
-      </div>
     </section>
 
     <section id="page-set" class="page">
-      <div class="box" style="max-width:640px; margin:0 auto;">
-        <h2>Pengaturan API Key AI Studio</h2>
-        <p class="muted">API Key disimpan di browser (<code>localStorage</code>). Gunakan model Flash atau Flash Lite jika model Pro terbatasi kuota.</p>
+      <div class="panel" style="max-width:640px; margin:0 auto;">
+        <h2>Pengaturan Koneksi & Model AI</h2>
+        <p class="muted">API Key disimpan lokal di browser (<code>localStorage</code>). Pilih model sesuai kebutuhan kuota dan kecepatan respons.</p>
         <label for="apiKey">API Key Google AI Studio</label>
         <input id="apiKey" type="password" placeholder="Tempelkan API Key di sini..." autocomplete="off" />
-        <label for="modelSel">Nama Model</label>
+        <label for="modelSel">Model Gemini</label>
         <select id="modelSel">
           <option value="gemini-2.5-flash">gemini-2.5-flash</option>
           <option value="gemini-3.5-flash-lite">gemini-3.5-flash-lite</option>
@@ -233,17 +293,38 @@
           <option value="custom">Model Kustom</option>
         </select>
         <div id="customWrap" style="display:none;">
-          <label for="customModel">Ketik Nama Model</label>
+          <label for="customModel">Nama Model Kustom</label>
           <input id="customModel" type="text" placeholder="Contoh: gemini-3.5-flash-lite" />
         </div>
-        <div class="row wrap" style="margin-top:12px;">
-          <button id="btnSimpanKey" class="btn btn-main" type="button">Simpan API Key</button>
-          <button id="btnTesKey" class="btn" type="button">Tes Koneksi API</button>
+        <div class="row wrap" style="margin-top:14px;">
+          <button id="btnSimpanKey" class="btn btn-primary" type="button">Simpan Pengaturan</button>
+          <button id="btnTesKey" class="btn" type="button">Tes Koneksi</button>
           <button id="btnHapusKey" class="btn btn-del" type="button">Hapus Key</button>
         </div>
         <div id="setAlert" class="alert"></div>
       </div>
     </section>
+  </div>
+
+  <div id="charModal" class="modal-backdrop" aria-hidden="true">
+    <div class="modal-card">
+      <div class="row" style="justify-content:space-between; margin-bottom:4px;">
+        <h3>Tambah Karakter Baru</h3>
+        <button id="btnCloseModalChar" class="btn btn-ghost" type="button">✕</button>
+      </div>
+      <p class="muted">Tentukan peran dan deskripsi karakter agar perannya jelas saat bermain peran.</p>
+      <label for="modalName">Nama Karakter</label>
+      <input id="modalName" type="text" placeholder="Contoh: Elena" />
+      <label for="modalRole">Peran Karakter</label>
+      <input id="modalRole" type="text" placeholder="Contoh: Tabib Kerajaan / Partner Misi" />
+      <label for="modalDesc">Deskripsi & Sifat Peran</label>
+      <textarea id="modalDesc" placeholder="Jelaskan sifat, cara bicara, latar belakang, dan bagaimana karakter ini berperan..."></textarea>
+      <div class="row wrap" style="margin-top:14px; justify-content:flex-end;">
+        <button id="btnCancelModalChar" class="btn" type="button">Batal</button>
+        <button id="btnSaveModalChar" class="btn btn-primary" type="button">Simpan Karakter</button>
+      </div>
+      <div id="modalAlert" class="alert"></div>
+    </div>
   </div>
   <script>
     const K_KEY = "cantika_key_v2";
@@ -251,13 +332,22 @@
     const K_CUS = "cantika_cus_v2";
     const K_CHR = "cantika_chr_v2";
 
-    const INIT_CHARS = [{
-      id: "cantika-1",
-      name: "Cantika",
-      role: "Asisten Kreatif & Partner Roleplay",
-      trait: "Ramah, imajinatif, dan menyesuaikan alur cerita pengguna.",
-      bio: "Asisten utama di dalam web CANTIKA AI."
-    }];
+    const INIT_CHARS = [
+      {
+        id: "cantika-1",
+        name: "Cantika",
+        role: "Partner Roleplay & Pemandu Cerita",
+        trait: "Hangat, ekspresif, peka terhadap emosi lawan bicara, dan luwes mengikuti alur.",
+        bio: "Karakter pendamping utama dengan peran adaptif yang menjaga cerita tetap hidup dan menarik."
+      },
+      {
+        id: "karakter-2",
+        name: "Raka Mahendra",
+        role: "Detektif Malam & Analis Kasus",
+        trait: "Tenang, observatif, bicara singkat dan tajam, namun perhatian pada detail kecil.",
+        bio: "Berperan sebagai penyelidik misteri kota yang membantu memecahkan teka-teki bersama pengguna."
+      }
+    ];
 
     let chars = loadChars();
     let pickedId = chars[0]?.id || "";
@@ -284,6 +374,7 @@
 
     function showAlert(id, msg, ok) {
       const el = document.getElementById(id);
+      if (!el) return;
       el.textContent = msg;
       el.className = "alert " + (ok ? "ok" : "err");
     }
@@ -311,14 +402,63 @@
     function goPage(name) {
       document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
       document.getElementById("page-" + name).classList.add("active");
-      document.querySelectorAll("header nav .btn").forEach(b => b.classList.toggle("active", b.dataset.go === name));
+      document.querySelectorAll(".topbar nav .btn").forEach(b => b.classList.toggle("active", b.dataset.go === name));
+      if (name === "char") {
+        renderRpSelect();
+        renderActiveCharCard();
+      }
     }
 
     document.querySelectorAll("[data-go]").forEach(b => b.addEventListener("click", () => goPage(b.dataset.go)));
-    document.getElementById("btnMulai").addEventListener("click", () => goPage("char"));
-    document.getElementById("btnHomeTambahChar").addEventListener("click", () => {
-      document.getElementById("homeName").focus();
-      document.getElementById("homeName").scrollIntoView({ behavior: "smooth", block: "center" });
+    document.getElementById("btnGoRpHome").addEventListener("click", () => goPage("char"));
+
+    const charModal = document.getElementById("charModal");
+    function openCharModal() {
+      charModal.classList.add("open");
+      charModal.setAttribute("aria-hidden", "false");
+      document.getElementById("modalAlert").className = "alert";
+      document.getElementById("modalName").focus();
+    }
+    function closeCharModal() {
+      charModal.classList.remove("open");
+      charModal.setAttribute("aria-hidden", "true");
+    }
+    document.getElementById("btnOpenModalChar").addEventListener("click", openCharModal);
+    document.getElementById("btnCloseModalChar").addEventListener("click", closeCharModal);
+    document.getElementById("btnCancelModalChar").addEventListener("click", closeCharModal);
+    charModal.addEventListener("click", e => {
+      if (e.target === charModal) closeCharModal();
+    });
+
+    document.getElementById("btnSaveModalChar").addEventListener("click", () => {
+      const name = document.getElementById("modalName").value.trim();
+      const role = document.getElementById("modalRole").value.trim();
+      const desc = document.getElementById("modalDesc").value.trim();
+      if (!name) return showAlert("modalAlert", "Nama karakter wajib diisi.", false);
+
+      const item = {
+        id: "c-" + Date.now(),
+        name,
+        role: role || "Karakter Roleplay",
+        trait: desc || "Menyesuaikan peran dengan situasi cerita.",
+        bio: desc || "Karakter baru di CANTIKA AI."
+      };
+      chars.unshift(item);
+      pickedId = item.id;
+      saveChars();
+      renderAllCharViews();
+      ["modalName", "modalRole", "modalDesc"].forEach(id => document.getElementById(id).value = "");
+      closeCharModal();
+      goPage("char");
+    });
+
+    document.getElementById("tabRp").addEventListener("click", () => {
+      document.getElementById("tabRp").classList.add("active");
+      document.getElementById("tabBuat").classList.remove("active");
+      document.getElementById("area-rp").style.display = "";
+      document.getElementById("area-buat").style.display = "none";
+      renderRpSelect();
+      renderActiveCharCard();
     });
 
     document.getElementById("tabBuat").addEventListener("click", () => {
@@ -328,83 +468,148 @@
       document.getElementById("area-rp").style.display = "none";
     });
 
-    document.getElementById("tabRp").addEventListener("click", () => {
-      document.getElementById("tabRp").classList.add("active");
-      document.getElementById("tabBuat").classList.remove("active");
-      document.getElementById("area-rp").style.display = "";
-      document.getElementById("area-buat").style.display = "none";
-      renderRpSelect();
-    });
-
     function addChat(boxId, text, cls) {
       const box = document.getElementById(boxId);
       const d = document.createElement("div");
-      d.className = "msg " + cls;
+      d.className = "bubble " + cls;
       d.textContent = text;
       box.appendChild(d);
       box.scrollTop = box.scrollHeight;
     }
 
-    function renderChars() {
-      const boxes = [document.getElementById("charList"), document.getElementById("homeCharList")];
-      boxes.forEach(box => {
-        if (!box) return;
-        box.innerHTML = "";
-        chars.forEach(c => {
-          const descText = c.bio || c.trait || "Belum ada deskripsi.";
-          const el = document.createElement("div");
-          el.className = "char-card" + (c.id === pickedId ? " picked" : "");
-          el.innerHTML = `<div><strong>${c.name}</strong><div class="muted">${c.role || "Karakter"}</div><div class="char-desc">${descText}</div></div>
-            <div class="row"><button class="btn" type="button" data-pick="${c.id}">Pilih</button>
-            ${chars.length > 1 ? `<button class="btn btn-del" type="button" data-del="${c.id}">Hapus</button>` : ""}</div>`;
-          box.appendChild(el);
-        });
+    function selectCharacterById(id, jumpToRp = false) {
+      pickedId = id;
+      const f = chars.find(x => x.id === pickedId);
+      if (f) {
+        document.getElementById("cName").value = f.name || "";
+        document.getElementById("cRole").value = f.role || "";
+        document.getElementById("cTrait").value = f.trait || "";
+        document.getElementById("cBio").value = f.bio || "";
+      }
+      renderAllCharViews();
+      if (jumpToRp) goPage("char");
+    }
 
-        box.querySelectorAll("[data-pick]").forEach(b => b.addEventListener("click", () => {
-          pickedId = b.dataset.pick;
-          const f = chars.find(x => x.id === pickedId);
-          if (f) {
-            document.getElementById("cName").value = f.name || "";
-            document.getElementById("cRole").value = f.role || "";
-            document.getElementById("cTrait").value = f.trait || "";
-            document.getElementById("cBio").value = f.bio || "";
-          }
-          renderChars();
-          renderRpSelect();
-        }));
+    function deleteCharacterById(id) {
+      if (chars.length <= 1) return;
+      chars = chars.filter(x => x.id !== id);
+      if (pickedId === id) pickedId = chars[0]?.id || "";
+      saveChars();
+      renderAllCharViews();
+    }
 
-        box.querySelectorAll("[data-del]").forEach(b => b.addEventListener("click", () => {
-          chars = chars.filter(x => x.id !== b.dataset.del);
-          if (pickedId === b.dataset.del) pickedId = chars[0]?.id || "";
-          saveChars();
-          renderChars();
-          renderRpSelect();
-        }));
+    function renderHomeGrid() {
+      const grid = document.getElementById("homeCharGrid");
+      const q = (document.getElementById("searchChar").value || "").trim().toLowerCase();
+      const filtered = chars.filter(c =>
+        (c.name || "").toLowerCase().includes(q) ||
+        (c.role || "").toLowerCase().includes(q) ||
+        (c.bio || "").toLowerCase().includes(q)
+      );
+      document.getElementById("charCountLabel").textContent = `${filtered.length} Karakter`;
+      grid.innerHTML = "";
+
+      filtered.forEach(c => {
+        const initial = (c.name || "C").trim().charAt(0).toUpperCase();
+        const desc = c.bio || c.trait || "Belum ada deskripsi peran.";
+        const card = document.createElement("div");
+        card.className = "profile-card" + (c.id === pickedId ? " selected" : "");
+        card.innerHTML = `
+          <div>
+            <div class="profile-top">
+              <div class="avatar">${initial}</div>
+              <div>
+                <strong>${c.name}</strong>
+                <div><span class="role-pill">${c.role || "Karakter"}</span></div>
+              </div>
+            </div>
+            <p class="profile-desc" style="margin-top:10px;">${desc}</p>
+          </div>
+          <div class="row wrap">
+            <button class="btn btn-primary grow" type="button" data-play="${c.id}">Mainkan Peran</button>
+            ${chars.length > 1 ? `<button class="btn btn-del" type="button" data-hdel="${c.id}">Hapus</button>` : ""}
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+
+      grid.querySelectorAll("[data-play]").forEach(b => {
+        b.addEventListener("click", () => selectCharacterById(b.dataset.play, true));
+      });
+      grid.querySelectorAll("[data-hdel]").forEach(b => {
+        b.addEventListener("click", () => deleteCharacterById(b.dataset.hdel));
       });
     }
 
-    document.getElementById("btnHomeSimpanChar").addEventListener("click", () => {
-      const name = document.getElementById("homeName").value.trim();
-      const role = document.getElementById("homeRole").value.trim();
-      const desc = document.getElementById("homeDesc").value.trim();
-      if (!name) return showAlert("homeAlert", "Nama karakter harus diisi.", false);
-      const item = {
-        id: "c-" + Date.now(),
-        name,
-        role: role || "Karakter",
-        trait: desc,
-        bio: desc
-      };
-      chars.unshift(item);
-      pickedId = item.id;
-      saveChars();
-      renderChars();
-      renderRpSelect();
-      showAlert("homeAlert", `Karakter "${name}" ditambahkan.`, true);
-    });
+    function renderStudioList() {
+      const box = document.getElementById("charList");
+      box.innerHTML = "";
+      chars.forEach(c => {
+        const el = document.createElement("div");
+        el.className = "profile-card" + (c.id === pickedId ? " selected" : "");
+        el.style.marginTop = "10px";
+        el.innerHTML = `
+          <div>
+            <strong>${c.name}</strong> <span class="role-pill">${c.role || "Karakter"}</span>
+            <p class="profile-desc" style="margin-top:6px;">${c.bio || c.trait || ""}</p>
+          </div>
+          <div class="row">
+            <button class="btn" type="button" data-pick="${c.id}">Pilih</button>
+            ${chars.length > 1 ? `<button class="btn btn-del" type="button" data-del="${c.id}">Hapus</button>` : ""}
+          </div>
+        `;
+        box.appendChild(el);
+      });
+      box.querySelectorAll("[data-pick]").forEach(b => b.addEventListener("click", () => selectCharacterById(b.dataset.pick, false)));
+      box.querySelectorAll("[data-del]").forEach(b => b.addEventListener("click", () => deleteCharacterById(b.dataset.del)));
+    }
 
-    document.getElementById("btnHomeResetChar").addEventListener("click", () => {
-      ["homeName", "homeRole", "homeDesc"].forEach(id => document.getElementById(id).value = "");
+    function renderRpSelect() {
+      const sel = document.getElementById("rpChar");
+      sel.innerHTML = "";
+      chars.forEach(c => {
+        const o = document.createElement("option");
+        o.value = c.id;
+        o.textContent = `${c.name} — ${c.role || "Karakter"}`;
+        if (c.id === pickedId) o.selected = true;
+        sel.appendChild(o);
+      });
+    }
+
+    function curChar() {
+      const id = document.getElementById("rpChar").value || pickedId;
+      return chars.find(c => c.id === id) || chars[0];
+    }
+
+    function renderActiveCharCard() {
+      const box = document.getElementById("activeCharInfo");
+      const c = curChar();
+      if (!c) return;
+      const initial = (c.name || "C").trim().charAt(0).toUpperCase();
+      box.innerHTML = `
+        <div class="profile-top">
+          <div class="avatar">${initial}</div>
+          <div>
+            <strong>${c.name}</strong>
+            <div><span class="role-pill">Peran: ${c.role || "Karakter"}</span></div>
+          </div>
+        </div>
+        <p class="muted">${c.bio || c.trait || "Memainkan peran sesuai karakter."}</p>
+      `;
+    }
+
+    function renderAllCharViews() {
+      renderHomeGrid();
+      renderStudioList();
+      renderRpSelect();
+      renderActiveCharCard();
+    }
+
+    document.getElementById("searchChar").addEventListener("input", renderHomeGrid);
+    document.getElementById("rpChar").addEventListener("change", e => {
+      pickedId = e.target.value;
+      renderActiveCharCard();
+      renderHomeGrid();
     });
 
     document.getElementById("btnSimpanChar").addEventListener("click", () => {
@@ -413,15 +618,14 @@
       const item = {
         id: "c-" + Date.now(),
         name,
-        role: document.getElementById("cRole").value.trim(),
+        role: document.getElementById("cRole").value.trim() || "Karakter",
         trait: document.getElementById("cTrait").value.trim(),
         bio: document.getElementById("cBio").value.trim()
       };
       chars.unshift(item);
       pickedId = item.id;
       saveChars();
-      renderChars();
-      renderRpSelect();
+      renderAllCharViews();
       showAlert("buatAlert", `Karakter "${name}" disimpan.`, true);
     });
 
@@ -435,7 +639,7 @@
       if (!q) return;
       inp.value = "";
       addChat("buatChat", q, "user");
-      const sys = "Kamu asisten pembuat karakter CANTIKA AI. Bantu buat karakter jelas dengan format Nama, Peran, Kepribadian & Gaya Bicara, serta Deskripsi / Latar Belakang.";
+      const sys = "Kamu asisten pembuat karakter CANTIKA AI. Buat karakter jelas dengan format Nama, Peran, Kepribadian & Gaya Bicara, serta Deskripsi & Latar Belakang.";
       try {
         const ans = await askGemini(q, sys);
         addChat("buatChat", ans, "ai");
@@ -452,36 +656,19 @@
       }
     });
 
-    function renderRpSelect() {
-      const sel = document.getElementById("rpChar");
-      sel.innerHTML = "";
-      chars.forEach(c => {
-        const o = document.createElement("option");
-        o.value = c.id;
-        o.textContent = c.name + (c.role ? " - " + c.role : "");
-        if (c.id === pickedId) o.selected = true;
-        sel.appendChild(o);
-      });
-    }
-
     document.getElementById("rpMode").addEventListener("change", e => {
       const isAi = e.target.value === "ai";
-      document.getElementById("rpManualWrap").style.display = isAi ? "none" : "";
       document.getElementById("rpAiWrap").style.display = isAi ? "" : "none";
+      document.getElementById("rpManualWrap").style.display = isAi ? "none" : "";
       addChat("rpChat", isAi ? "Mode: Diatur AI Asisten." : "Mode: Diatur Sendiri (Manual).", "sys");
     });
-
-    function curChar() {
-      const id = document.getElementById("rpChar").value || pickedId;
-      return chars.find(c => c.id === id) || chars[0];
-    }
 
     document.getElementById("btnAiMulaiRp").addEventListener("click", async () => {
       const c = curChar();
       const topic = document.getElementById("rpTopic").value.trim() || "bebas";
-      const sys = `Kamu mengatur roleplay CANTIKA AI dan memerankan ${c.name} (${c.role}). Sifat: ${c.trait}. Deskripsi: ${c.bio}. Tema/nuansa: ${topic}.`;
+      const sys = `Kamu mengatur roleplay CANTIKA AI dan memerankan ${c.name} dengan peran "${c.role}". Sifat/gaya bicara: ${c.trait}. Deskripsi peran: ${c.bio}. Tema/nuansa: ${topic}.`;
       try {
-        const open = await askGemini("Buat skenario pembuka dan mulai adegan pertama.", sys);
+        const open = await askGemini("Buat adegan pembuka yang sesuai dengan peran dan deskripsi karaktermu.", sys);
         rpLog = [{ r: "ai", t: open }];
         addChat("rpChat", open, "ai");
       } catch (e) {
@@ -500,9 +687,9 @@
       rpLog.push({ r: "user", t: txt });
       addChat("rpChat", txt, "user");
       const rule = mode === "ai"
-        ? "Sebagai AI asisten pengatur roleplay, arahkan cerita dan beri situasi menarik secara alami."
+        ? "Sebagai pengatur roleplay, arahkan cerita dan jaga karakter tetap setia pada perannya."
         : `Ikuti skenario/aturan pengguna: ${setTxt || "Bebas sesuai percakapan."}`;
-      const sys = `Perankan ${c.name} (${c.role}). Sifat: ${c.trait}. Deskripsi: ${c.bio}. ${rule}`;
+      const sys = `Perankan ${c.name} dengan peran "${c.role}". Sifat: ${c.trait}. Deskripsi: ${c.bio}. ${rule}`;
       const hist = rpLog.slice(-10).map(x => `${x.r === "user" ? "Pengguna" : c.name}: ${x.t}`).join("\n");
       try {
         const rep = await askGemini(hist + `\n${c.name}:`, sys);
@@ -516,7 +703,7 @@
     document.getElementById("btnRpReset").addEventListener("click", () => {
       rpLog = [];
       document.getElementById("rpChat").innerHTML = "";
-      addChat("rpChat", "Chat roleplay direset.", "sys");
+      addChat("rpChat", "Percakapan peran direset.", "sys");
     });
 
     document.getElementById("modelSel").addEventListener("change", e => {
@@ -529,7 +716,7 @@
       localStorage.setItem(K_KEY, k);
       localStorage.setItem(K_MOD, document.getElementById("modelSel").value);
       localStorage.setItem(K_CUS, document.getElementById("customModel").value.trim());
-      showAlert("setAlert", `API Key tersimpan. Model: ${activeModel()}`, true);
+      showAlert("setAlert", `Tersimpan. Model aktif: ${activeModel()}`, true);
     });
 
     document.getElementById("btnTesKey").addEventListener("click", async () => {
@@ -566,10 +753,9 @@
         document.getElementById("customWrap").style.display = m === "custom" ? "" : "none";
       }
       if (c) document.getElementById("customModel").value = c;
-      addChat("buatChat", "Halo! Ceritakan ide karakter yang ingin kamu buat.", "ai");
-      addChat("rpChat", "Pilih karakter dan mode roleplay lalu mulai.", "sys");
-      renderChars();
-      renderRpSelect();
+      addChat("buatChat", "Halo! Ceritakan ide karakter dan peran yang ingin kamu buat.", "ai");
+      addChat("rpChat", "Pilih karakter lalu mulai bermain peran.", "sys");
+      renderAllCharViews();
     })();
   </script>
   <script>
